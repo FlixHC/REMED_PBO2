@@ -27,14 +27,14 @@ public class ProductForm extends JFrame {
     private JButton removeButton;
     private JButton editButton;
     private JFrame frame;
-    private int idCounter = 2;
+    private int idCounter = 0;
     
 
 
     public ProductForm() {
         List<Product> products = new ArrayList<>();
-        products.add(new Product(1, "P001", "Americano", "Coffee", 18000, 10));
-        products.add(new Product(2, "P002", "Pandan Latte", "Coffee", 15000, 8));
+        products.add(new Product(idCounter++, "P001", "Americano", "Coffee", 18000, 10));
+        products.add(new Product(idCounter++, "P002", "Pandan Latte", "Coffee", 15000, 8));
         
         
         
