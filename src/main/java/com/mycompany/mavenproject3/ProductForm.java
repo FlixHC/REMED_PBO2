@@ -12,7 +12,6 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ProductForm extends JFrame {
@@ -30,12 +29,9 @@ public class ProductForm extends JFrame {
     private JButton refreshButton;
     private int idCounter = 3;
     
-    private List<Product> products;
-    private Coffee mainWindow;
-        
+    private List<Product> products;        
     public ProductForm(List<Product> products, Coffee mainWindow) {
         this.products = products;
-        this.mainWindow = mainWindow;
         
         priceField = new JTextField(6);
         codeField = new JTextField(6);
@@ -48,7 +44,6 @@ public class ProductForm extends JFrame {
         refreshButton = new JButton("Simpan");
         tableModel = new DefaultTableModel(new String[]{"Kode", "Nama", "Kategori", "Harga Jual", "Stok"}, 0);
         drinkTable = new JTable(tableModel);
-        
         
         
         drinkTable.getSelectionModel().addListSelectionListener(event -> { //Membaca ketika list dipilih
@@ -66,7 +61,8 @@ public class ProductForm extends JFrame {
             priceField.setText(selectedPrice);
             stockField.setText(selectedStock);
     }
-});     refreshButton.addActionListener(e -> {
+});     
+        refreshButton.addActionListener(e -> {
         mainWindow.updateBannerText(); 
         });
         
@@ -196,9 +192,9 @@ public class ProductForm extends JFrame {
     }
 
     private void loadProductData() {
-        for (Product p : products) {
+        for (Product produk : products) {
             tableModel.addRow(new Object[]{
-                p.getCode(), p.getName(), p.getCategory(), p.getPrice(), p.getStock()
+                produk.getCode(), produk.getName(), produk.getCategory(), produk.getPrice(), produk.getStock()
             });
         }
     }
