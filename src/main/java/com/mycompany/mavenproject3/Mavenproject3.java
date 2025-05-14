@@ -2,25 +2,33 @@ package com.mycompany.mavenproject3;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Mavenproject3 extends JFrame implements Runnable {
-    private String text;
-    private int x;
+    private List<Product> products; 
+    private String bannerText = ""; 
+    private int x; 
     private int width;
-    private BannerPanel bannerPanel;
+    private BannerPanel bannerPanel; 
     private JButton addProductButton;
 
-    public Mavenproject3(String text) {
-        this.text = text;
-        setTitle("WK. STI Chill");
+    public Coffee(String text) {
+        
+        setTitle("Kopi Cina");
         setSize(600, 150);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
-
+        
         // Panel teks berjalan
         bannerPanel = new BannerPanel();
         add(bannerPanel, BorderLayout.CENTER);
+        
+        products = new ArrayList<>();
+        products.add(new Product(1, "P001", "Americano", "Coffee", 18000, 10));
+        products.add(new Product(2, "P002", "Pandan Latte", "Coffee", 15000, 8));
+        updateBannerText();
 
         // Tombol "Kelola Produk"
         JPanel bottomPanel = new JPanel();
@@ -29,7 +37,7 @@ public class Mavenproject3 extends JFrame implements Runnable {
         add(bottomPanel, BorderLayout.SOUTH);
         
         addProductButton.addActionListener(e -> {
-            new ProductForm().setVisible(true);
+            new ProductForm(products, this).setVisible(true);
         });
 
         setVisible(true);
@@ -44,7 +52,7 @@ public class Mavenproject3 extends JFrame implements Runnable {
             super.paintComponent(g);
             g.setColor(Color.RED);
             g.setFont(new Font("Arial", Font.BOLD, 18));
-            g.drawString(text, x, getHeight() / 2);
+            g.drawString(bannerText, x, getHeight() / 2);
         }
     }
 
@@ -54,7 +62,7 @@ public class Mavenproject3 extends JFrame implements Runnable {
         while (true) {
             x += 5;
             if (x > width) {
-                x = -getFontMetrics(new Font("Arial", Font.BOLD, 18)).stringWidth(text);
+                x = -getFontMetrics(new Font("Arial", Font.BOLD, 18)).stringWidth(bannerText);
             }
             bannerPanel.repaint();
             try {
@@ -64,8 +72,17 @@ public class Mavenproject3 extends JFrame implements Runnable {
             }
         }
     }
+    
+    public void updateBannerText() {
+        StringBuilder sb = new StringBuilder("Menu yang tersedia: ");
+        for (Product a : products) {
+            sb.append(a.getName()).append(" | ");
+        }
+        bannerText = sb.toString();
+        bannerPanel.repaint(); 
+    }
 
     public static void main(String[] args) {
-        new Mavenproject3("Menu yang tersedia: Americano | Pandan Latte | Aren Latte | Matcha Frappucino | Jus Apel");
+        new Coffee("");
     }
 }
