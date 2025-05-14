@@ -2,11 +2,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.mycompany.mavenproject3;
+package com.mycompany.coffee;
 
 /**
  *
- * @author ASUS
+ * @author User
  */
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -27,16 +27,15 @@ public class ProductForm extends JFrame {
     private JButton removeButton;
     private JButton editButton;
     private JFrame frame;
-    private int idCounter = 0;
+    private JButton refreshButton;
+    private int idCounter = 3;
     
-
-
-    public ProductForm() {
-        List<Product> products = new ArrayList<>();
-        products.add(new Product(idCounter++, "P001", "Americano", "Coffee", 18000, 10));
-        products.add(new Product(idCounter++, "P002", "Pandan Latte", "Coffee", 15000, 8));
+    private List<Product> products;
+    private Coffee mainWindow;
         
-        
+    public ProductForm(List<Product> products, Coffee mainWindow) {
+        this.products = products;
+        this.mainWindow = mainWindow;
         
         priceField = new JTextField(6);
         codeField = new JTextField(6);
@@ -46,6 +45,7 @@ public class ProductForm extends JFrame {
         addButton = new JButton("Tambah");
         removeButton = new JButton("Hapus");
         editButton = new JButton("Edit");
+        refreshButton = new JButton("Simpan");
         tableModel = new DefaultTableModel(new String[]{"Kode", "Nama", "Kategori", "Harga Jual", "Stok"}, 0);
         drinkTable = new JTable(tableModel);
         
@@ -66,7 +66,9 @@ public class ProductForm extends JFrame {
             priceField.setText(selectedPrice);
             stockField.setText(selectedStock);
     }
-});
+});     refreshButton.addActionListener(e -> {
+        mainWindow.updateBannerText(); 
+        });
         
         addButton.addActionListener (e ->{
 
@@ -125,7 +127,13 @@ public class ProductForm extends JFrame {
             } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(frame, "Harga harus berupa angka!");
             return;
+            
+            
         }
+            
+        
+
+
 
         // Update data di bagian ArrayList dan menggunakan get set di class product
         products.get(selectedRow).setCode(newCode);
@@ -176,8 +184,9 @@ public class ProductForm extends JFrame {
         buttonPanel.add(addButton);
         buttonPanel.add(removeButton);
         buttonPanel.add(editButton);
+        buttonPanel.add(refreshButton);
        
-        loadProductData(products);
+        loadProductData();
         
 
         frame.add (new JScrollPane(drinkTable), BorderLayout.CENTER);
@@ -186,11 +195,12 @@ public class ProductForm extends JFrame {
         frame.setVisible (true);
     }
 
-    private void loadProductData(List<Product> productList) {
-        for (Product product : productList) {
+    private void loadProductData() {
+        for (Product p : products) {
             tableModel.addRow(new Object[]{
-                product.getCode(), product.getName(), product.getCategory(), product.getPrice(), product.getStock()
+                p.getCode(), p.getName(), p.getCategory(), p.getPrice(), p.getStock()
             });
         }
     }
+    
 }
