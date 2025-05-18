@@ -25,12 +25,13 @@ public class ProductForm extends JFrame {
     private JButton addButton;
     private JButton removeButton;
     private JButton editButton;
-    private JFrame frame;
     private JButton refreshButton;
+    private JFrame mainFrame;
     private int idCounter = 3;
     
-    private List<Product> products;        
-    public ProductForm(List<Product> products, Coffee mainWindow) {
+    private List<Product> products;
+        
+    public ProductForm(List<Product> products, Kopi mainWindow) {
         this.products = products;
         
         priceField = new JTextField(6);
@@ -41,10 +42,9 @@ public class ProductForm extends JFrame {
         addButton = new JButton("Tambah");
         removeButton = new JButton("Hapus");
         editButton = new JButton("Edit");
-        refreshButton = new JButton("Simpan");
         tableModel = new DefaultTableModel(new String[]{"Kode", "Nama", "Kategori", "Harga Jual", "Stok"}, 0);
         drinkTable = new JTable(tableModel);
-        
+        mainFrame = new JFrame ("Kapucino Kopicina"); 
         
         drinkTable.getSelectionModel().addListSelectionListener(event -> { //Membaca ketika list dipilih
             int selectedRow = drinkTable.getSelectedRow();
@@ -62,9 +62,6 @@ public class ProductForm extends JFrame {
             stockField.setText(selectedStock);
     }
 });     
-        refreshButton.addActionListener(e -> {
-        mainWindow.updateBannerText(); 
-        });
         
         addButton.addActionListener (e ->{
 
@@ -76,7 +73,6 @@ public class ProductForm extends JFrame {
                 String category = categoryField.getSelectedItem().toString();
                 double price = Double.parseDouble(priceField.getText());
                 int stock = Integer.parseInt(stockField.getText());
-
               
                 Product product = new Product(idCounter++, code, name, category, price, stock);
                 products.add(product);
@@ -85,9 +81,12 @@ public class ProductForm extends JFrame {
                 nameField.setText("");
                 priceField.setText("");
                 stockField.setText("");
+                
+                mainWindow.updateBannerText(); 
+
                 }
 
-                //exception handling ketika harga berupa string
+                //exception handling ketika harga bukan angka
                 catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(drinkTable, "Harga dan Stok harus berupa angka!");
                 }
@@ -98,6 +97,8 @@ public class ProductForm extends JFrame {
 
             if (selectedRow != -1){
                 products.remove(selectedRow);
+                mainWindow.updateBannerText(); 
+
                 tableModel.removeRow(selectedRow);
                 codeField.setText("");
                 nameField.setText("");
@@ -110,7 +111,8 @@ public class ProductForm extends JFrame {
         });
         
         editButton.addActionListener(e -> {
-            int selectedRow = drinkTable.getSelectedRow(); //Menggunakan sistem yang mirip dengan remove
+            int selectedRow = drinkTable.getSelectedRow(); 
+
             if (selectedRow != -1) {
             String newCode = codeField.getText();
             String newName = nameField.getText();
@@ -118,18 +120,15 @@ public class ProductForm extends JFrame {
             double newPrice;
             int newStock = Integer.parseInt(stockField.getText());
 
+                        
+
             try {
                 newPrice = Double.parseDouble(priceField.getText()); // Mencegah error ketika harga bukan berupa angka
             } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(frame, "Harga harus berupa angka!");
+            JOptionPane.showMessageDialog(drinkTable, "Harga harus berupa angka!");
             return;
-            
-            
         }
             
-        
-
-
 
         // Update data di bagian ArrayList dan menggunakan get set di class product
         products.get(selectedRow).setCode(newCode);
@@ -144,24 +143,25 @@ public class ProductForm extends JFrame {
         drinkTable.setValueAt(newCategory, selectedRow, 2);
         drinkTable.setValueAt(newPrice, selectedRow, 3);
         drinkTable.setValueAt(newStock, selectedRow, 4);
-
  
-
         // Clear input pasca edit
         codeField.setText("");
         nameField.setText("");
         categoryField.setSelectedIndex(0);
         priceField.setText("");
         stockField.setText("");
+        
+        mainWindow.updateBannerText(); 
+
         } else {
-            JOptionPane.showMessageDialog(frame, "Pilih produk yang ingin diubah!");
+            JOptionPane.showMessageDialog(drinkTable, "Pilih produk yang ingin diubah!");
         }
         });
     
-        JFrame frame = new JFrame("Kapucino Kopicina");
-        frame.setSize(900, 450);
-        frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        frame.setLocationRelativeTo(null);
+        mainFrame = new JFrame("Kapucino Kopicina");
+        mainFrame.setSize(900, 450);
+        mainFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        mainFrame.setLocationRelativeTo(null);
         
         JPanel formPanel = new JPanel();
         formPanel.add(new JLabel("Kode Barang"));
@@ -174,29 +174,43 @@ public class ProductForm extends JFrame {
         formPanel.add(priceField);
         formPanel.add(new JLabel("Stok Tersedia:"));        
         formPanel.add(stockField);
-        
-        
+                
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(addButton);
         buttonPanel.add(removeButton);
         buttonPanel.add(editButton);
-        buttonPanel.add(refreshButton);
        
         loadProductData();
         
-
-        frame.add (new JScrollPane(drinkTable), BorderLayout.CENTER);
-        frame.add (formPanel,  BorderLayout.SOUTH);
-        frame.add (buttonPanel, BorderLayout.AFTER_LINE_ENDS);
-        frame.setVisible (true);
+        mainFrame.add (new JScrollPane(drinkTable), BorderLayout.CENTER);
+        mainFrame.add (formPanel,  BorderLayout.SOUTH);
+        mainFrame.add (buttonPanel, BorderLayout.AFTER_LINE_ENDS);
+        mainFrame.setVisible (true);
     }
 
     private void loadProductData() {
-        for (Product produk : products) {
+        for (Product a : products) {
             tableModel.addRow(new Object[]{
-                produk.getCode(), produk.getName(), produk.getCategory(), produk.getPrice(), produk.getStock()
+                a.getCode(), a.getName(), a.getCategory(), a.getPrice(), a.getStock()
             });
         }
     }
     
+    public void refreshStock() {
+    tableModel.setRowCount(0);
+
+    for (Product product : products) {
+        tableModel.addRow(new Object[] {
+            product.getCode(),
+            product.getName(),
+            product.getCategory(),
+            product.getPrice(),
+            product.getStock()
+        });
+    }
+    
+    
 }
+    
+}
+
