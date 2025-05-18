@@ -5,15 +5,19 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Mavenproject3 extends JFrame implements Runnable {
+public class Kopi extends JFrame implements Runnable {
     private List<Product> products; 
+    private List<Sale> sale;
     private String bannerText = ""; 
     private int x; 
     private int width;
     private BannerPanel bannerPanel; 
     private JButton addProductButton;
+    private JButton sellProductButton;
+    private ProductForm productForm;
+    private SaleForm saleForm;
 
-    public Coffee(String text) {
+    public Kopi(String text) {
         
         setTitle("Kopi Cina");
         setSize(600, 150);
@@ -29,16 +33,36 @@ public class Mavenproject3 extends JFrame implements Runnable {
         products.add(new Product(1, "P001", "Americano", "Coffee", 18000, 10));
         products.add(new Product(2, "P002", "Pandan Latte", "Coffee", 15000, 8));
         updateBannerText();
+        
+        sale = new ArrayList<>();
+        
 
         // Tombol "Kelola Produk"
         JPanel bottomPanel = new JPanel();
         addProductButton = new JButton("Kelola Produk");
+        sellProductButton = new JButton("Penjualan");
         bottomPanel.add(addProductButton);
+        bottomPanel.add(sellProductButton);
         add(bottomPanel, BorderLayout.SOUTH);
         
         addProductButton.addActionListener(e -> {
-            new ProductForm(products, this).setVisible(true);
+            if (productForm == null) {
+            productForm = new ProductForm(products, this);
+            }
+            productForm.setVisible(true);
         });
+        
+        sellProductButton.addActionListener(e -> {
+            if (productForm == null) {
+            productForm = new ProductForm(products, this);
+            }
+
+            if (saleForm == null) {
+            saleForm = new SaleForm(products, sale, this, productForm);
+            }
+            saleForm.setVisible(true);
+        });
+        
 
         setVisible(true);
 
@@ -66,7 +90,7 @@ public class Mavenproject3 extends JFrame implements Runnable {
             }
             bannerPanel.repaint();
             try {
-                Thread.sleep(100);
+                Thread.sleep(50);
             } catch (InterruptedException e) {
                 break;
             }
@@ -76,13 +100,16 @@ public class Mavenproject3 extends JFrame implements Runnable {
     public void updateBannerText() {
         StringBuilder sb = new StringBuilder("Menu yang tersedia: ");
         for (Product a : products) {
-            sb.append(a.getName()).append(" | ");
+
+            if (a.getStock()>0){
+                sb.append(a.getName()).append(" | ");
+            }
         }
         bannerText = sb.toString();
-        bannerPanel.repaint(); 
+        bannerPanel.repaint(); // Refresh the banner after updating the text
     }
 
     public static void main(String[] args) {
-        new Coffee("");
+        new Kopi("");
     }
 }
