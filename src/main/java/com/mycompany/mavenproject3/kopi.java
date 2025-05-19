@@ -1,5 +1,13 @@
-package com.mycompany.mavenproject3;
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ */
 
+package com.mycompany.kopi;
+
+/**
+ *
+ * @author User
+ */
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
@@ -45,6 +53,12 @@ public class Kopi extends JFrame implements Runnable {
         bottomPanel.add(sellProductButton);
         add(bottomPanel, BorderLayout.SOUTH);
         
+        saleForm = new SaleForm(products, sale, this);
+        productForm = new ProductForm (products, this);
+        
+        saleForm.setProductForm(productForm);
+        productForm.setSaleForm(saleForm);
+        
         addProductButton.addActionListener(e -> {
             if (productForm == null) {
             productForm = new ProductForm(products, this);
@@ -58,7 +72,7 @@ public class Kopi extends JFrame implements Runnable {
             }
 
             if (saleForm == null) {
-            saleForm = new SaleForm(products, sale, this, productForm);
+            saleForm = new SaleForm(products, sale, this);
             }
             saleForm.setVisible(true);
         });
