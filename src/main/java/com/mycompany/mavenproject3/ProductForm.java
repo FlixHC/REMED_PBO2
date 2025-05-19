@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.mycompany.coffee;
+package com.mycompany.kopi;
 
 /**
  *
@@ -28,7 +28,9 @@ public class ProductForm extends JFrame {
     private JButton refreshButton;
     private JFrame mainFrame;
     private int idCounter = 3;
-    
+    private SaleForm saleForm;
+
+
     private List<Product> products;
         
     public ProductForm(List<Product> products, Kopi mainWindow) {
@@ -83,7 +85,7 @@ public class ProductForm extends JFrame {
                 stockField.setText("");
                 
                 mainWindow.updateBannerText(); 
-
+                saleForm.refreshItem();
                 }
 
                 //exception handling ketika harga bukan angka
@@ -98,7 +100,7 @@ public class ProductForm extends JFrame {
             if (selectedRow != -1){
                 products.remove(selectedRow);
                 mainWindow.updateBannerText(); 
-
+                saleForm.refreshItem();
                 tableModel.removeRow(selectedRow);
                 codeField.setText("");
                 nameField.setText("");
@@ -152,6 +154,8 @@ public class ProductForm extends JFrame {
         stockField.setText("");
         
         mainWindow.updateBannerText(); 
+        saleForm.refreshItem();
+
 
         } else {
             JOptionPane.showMessageDialog(drinkTable, "Pilih produk yang ingin diubah!");
@@ -196,9 +200,14 @@ public class ProductForm extends JFrame {
         }
     }
     
+    public void setSaleForm(SaleForm saleForm){
+        this.saleForm = saleForm;
+    }
+
     public void refreshStock() {
     tableModel.setRowCount(0);
-
+    
+    
     for (Product product : products) {
         tableModel.addRow(new Object[] {
             product.getCode(),
@@ -213,4 +222,3 @@ public class ProductForm extends JFrame {
 }
     
 }
-
