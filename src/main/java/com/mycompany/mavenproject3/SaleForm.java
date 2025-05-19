@@ -1,3 +1,13 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package com.mycompany.kopi;
+
+/**
+ *
+ * @author User
+ */
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -15,9 +25,9 @@ public class SaleForm extends JFrame {
     private ProductForm productForm;
     private List<Product> products;
     private List<Sale> sale;
-    private Coffee mainWindow;
+    private Kopi mainWindow;
         
-    public SaleForm(List<Product> products, List<Sale> sale, Coffee mainWindow, ProductForm productForm) {
+    public SaleForm(List<Product> products, List<Sale> sale, Kopi mainWindow) {
         this.sale = sale;
         this.products = products;
         this.mainWindow = mainWindow;
@@ -32,7 +42,8 @@ public class SaleForm extends JFrame {
         saleButton = new JButton("Tambah Penjualan");
         tableModel = new DefaultTableModel(new String[]{"Nama", "Harga Jual", "Jumlah"}, 0);
         saleTable = new JTable(tableModel);
-        mainFrame = new JFrame ("Kapucino coffeecina"); 
+        mainFrame = new JFrame ("Kapucino Kopicina"); 
+        
         
         saleTable.getSelectionModel().addListSelectionListener(event -> { //Membaca ketika list dipilih
             int selectedRow = saleTable.getSelectedRow();
@@ -64,6 +75,7 @@ public class SaleForm extends JFrame {
                         break;
                     }
                 }
+                
 
                 if (matchedProduct == null) {
                 JOptionPane.showMessageDialog(saleTable, "Produk tidak ditemukan!");
@@ -74,7 +86,6 @@ public class SaleForm extends JFrame {
                 JOptionPane.showMessageDialog(saleTable, "Stok tidak mencukupi!");
                 return;
                 }
-
                 matchedProduct.setStock((int) (matchedProduct.getStock() - quant));
 
                 Sale sales = new Sale(name, harga, quant);
@@ -92,6 +103,8 @@ public class SaleForm extends JFrame {
                 JOptionPane.showMessageDialog(saleTable, "Harga dan Jumlah harus berupa angka!");
             }
         });
+        
+        
         
         
         mainFrame = new JFrame("Penjualan");
@@ -114,4 +127,15 @@ public class SaleForm extends JFrame {
     
     }
     
+    public void refreshItem(){
+        nameField.removeAllItems();
+            
+        for (Product p : products){
+                nameField.addItem(p.getName());
+            }
+        }
+    
+    public void setProductForm(ProductForm productForm){
+        this.productForm = productForm;
+    }
 }
