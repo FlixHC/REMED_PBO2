@@ -16,14 +16,20 @@ import java.util.List;
 public class Kopi extends JFrame implements Runnable {
     private List<Product> products; 
     private List<Sale> sale;
+    private List<Customer> customer;
+    private List<Member> member;
     private String bannerText = ""; 
     private int x; 
     private int width;
     private BannerPanel bannerPanel; 
     private JButton addProductButton;
     private JButton sellProductButton;
+    private JButton customerProductButton;
+    private JButton memberListButton;
     private ProductForm productForm;
     private SaleForm saleForm;
+    private CustomerForm customerForm;
+    private MemberList memberList;
 
     public Kopi(String text) {
         
@@ -43,21 +49,36 @@ public class Kopi extends JFrame implements Runnable {
         updateBannerText();
         
         sale = new ArrayList<>();
+        customer = new ArrayList<>();
+        member = new ArrayList<>();
         
 
         // Tombol "Kelola Produk"
         JPanel bottomPanel = new JPanel();
         addProductButton = new JButton("Kelola Produk");
         sellProductButton = new JButton("Penjualan");
+        customerProductButton = new JButton("Pemesanan");
+        memberListButton = new JButton ("Pelanggan");
+        
         bottomPanel.add(addProductButton);
         bottomPanel.add(sellProductButton);
+        bottomPanel.add(customerProductButton);
+        bottomPanel.add(memberListButton);
         add(bottomPanel, BorderLayout.SOUTH);
         
         saleForm = new SaleForm(products, sale, this);
         productForm = new ProductForm (products, this);
+        customerForm = new CustomerForm (products, customer, this);
+        memberList = new MemberList (products, member, this);
         
         saleForm.setProductForm(productForm);
         productForm.setSaleForm(saleForm);
+        productForm.setCustomerForm(customerForm);
+        productForm.setMemberList(memberList);
+        customerForm.setMemberList(memberList);
+        customerForm.setProductForm(productForm);
+        memberList.setProductForm(productForm);
+        
         
         addProductButton.addActionListener(e -> {
             if (productForm == null) {
@@ -75,9 +96,42 @@ public class Kopi extends JFrame implements Runnable {
             saleForm = new SaleForm(products, sale, this);
             }
             saleForm.setVisible(true);
+            
+            if(memberList == null){
+                memberList = new MemberList (products, member, this);
+            }
         });
         
+        customerProductButton.addActionListener(e -> {
+            if (productForm == null) {
+            productForm = new ProductForm(products, this);
+            }
 
+           if (customerForm == null) {
+            customerForm = new CustomerForm(products, customer, this);
+            }
+           
+           if(memberList == null){
+                memberList = new MemberList (products, member, this);
+            }
+           
+            customerForm.setVisible(true);
+        });
+        
+        memberListButton.addActionListener(e -> {
+            if (productForm == null){
+                productForm = new ProductForm(products, this);
+            }
+            if (saleForm == null){
+                saleForm = new SaleForm(products, sale, this);
+            }
+            if(memberList == null){
+                memberList = new MemberList (products, member, this);
+            }
+            memberList.setVisible(true);
+        });
+        
+       
         setVisible(true);
 
         Thread thread = new Thread(this);

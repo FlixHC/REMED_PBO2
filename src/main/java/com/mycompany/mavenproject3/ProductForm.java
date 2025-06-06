@@ -25,10 +25,10 @@ public class ProductForm extends JFrame {
     private JButton addButton;
     private JButton removeButton;
     private JButton editButton;
-    private JButton refreshButton;
-    private JFrame mainFrame;
     private int idCounter = 3;
     private SaleForm saleForm;
+    private CustomerForm customerForm;
+    private MemberList memberList;
 
 
     private List<Product> products;
@@ -46,7 +46,6 @@ public class ProductForm extends JFrame {
         editButton = new JButton("Edit");
         tableModel = new DefaultTableModel(new String[]{"Kode", "Nama", "Kategori", "Harga Jual", "Stok"}, 0);
         drinkTable = new JTable(tableModel);
-        mainFrame = new JFrame ("Kapucino Kopicina"); 
         
         drinkTable.getSelectionModel().addListSelectionListener(event -> { //Membaca ketika list dipilih
             int selectedRow = drinkTable.getSelectedRow();
@@ -162,10 +161,10 @@ public class ProductForm extends JFrame {
         }
         });
     
-        mainFrame = new JFrame("Kapucino Kopicina");
-        mainFrame.setSize(900, 450);
-        mainFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        mainFrame.setLocationRelativeTo(null);
+        setTitle("Produk");
+        setSize(900, 600);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
         
         JPanel formPanel = new JPanel();
         formPanel.add(new JLabel("Kode Barang"));
@@ -186,10 +185,10 @@ public class ProductForm extends JFrame {
        
         loadProductData();
         
-        mainFrame.add (new JScrollPane(drinkTable), BorderLayout.CENTER);
-        mainFrame.add (formPanel,  BorderLayout.SOUTH);
-        mainFrame.add (buttonPanel, BorderLayout.AFTER_LINE_ENDS);
-        mainFrame.setVisible (true);
+        add (new JScrollPane(drinkTable), BorderLayout.CENTER);
+        add (formPanel,  BorderLayout.SOUTH);
+        add (buttonPanel, BorderLayout.AFTER_LINE_ENDS);
+        setVisible (true);
     }
 
     private void loadProductData() {
@@ -202,6 +201,14 @@ public class ProductForm extends JFrame {
     
     public void setSaleForm(SaleForm saleForm){
         this.saleForm = saleForm;
+    }
+    
+    public void setMemberList (MemberList memberList){
+        this.memberList = memberList;
+    }
+    
+    public void setCustomerForm(CustomerForm customerForm){
+        this.customerForm = customerForm;
     }
 
     public void refreshStock() {

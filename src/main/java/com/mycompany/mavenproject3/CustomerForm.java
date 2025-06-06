@@ -14,23 +14,26 @@ import java.awt.*;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 import java.util.List;
 
-public class SaleForm extends JFrame {
-    private JTable saleTable;
+public class CustomerForm extends JFrame {
+    private JTable customerTable;
     private DefaultTableModel tableModel;
     private JTextField priceField;
+    private JTextField customField;
     private JTextField quantField;
+    private JTextField totalField;
     private JComboBox<String> nameField;
     private JButton saleButton;
-    private CustomerForm customerForm;
-    private MemberList memberList;
     private ProductForm productForm;
     private List<Product> products;
-    private List<Sale> sale;
     private List<Customer> customer;
     private Kopi mainWindow;
+    private int idCounter = 0;
+    private CustomerForm customerForm;
+    private SaleForm saleForm;
+    private MemberList memberList;
         
-    public SaleForm(List<Product> products, List<Sale> sale, Kopi mainWindow) {
-        this.sale = sale;
+    public CustomerForm(List<Product> products, List<Customer> customer, Kopi mainWindow) {
+        this.customerForm = customerForm;
         this.products = products;
         this.mainWindow = mainWindow;
         this.productForm = productForm;
@@ -41,22 +44,23 @@ public class SaleForm extends JFrame {
             nameField.addItem(p.getName());
         }
         quantField = new JTextField(5);
+        totalField = new JTextField(6);
         saleButton = new JButton("Tambah Penjualan");
-        tableModel = new DefaultTableModel(new String[]{"Nama", "Harga Jual", "Jumlah"}, 0);
-        saleTable = new JTable(tableModel);
+        tableModel = new DefaultTableModel(new String[]{"Nama", "Pesanan", "Harga Jual", "Jumlah", "Total"}, 0);
+        customerTable = new JTable(tableModel);
+        customField = new JTextField(5);
         
-        
-        saleTable.getSelectionModel().addListSelectionListener(event -> { //Membaca ketika list dipilih
-            int selectedRow = saleTable.getSelectedRow();
+        customerTable.getSelectionModel().addListSelectionListener(event -> { //Membaca ketika list dipilih
+            int selectedRow = customerTable.getSelectedRow();
 
             if (selectedRow != -1) {
-            String selectedHarga = saleTable.getValueAt(selectedRow, 1).toString();
-            String selectedQuant = saleTable.getValueAt(selectedRow, 2).toString();
+            String selectedNama = customerTable.getValueAt(selectedRow, 0).toString();
+            String selectedHarga = customerTable.getValueAt(selectedRow, 2).toString();
+            String selectedQuant = customerTable.getValueAt(selectedRow, 3).toString();
    
+            customField.setText(selectedNama);
             priceField.setText(selectedHarga);
             quantField.setText(selectedQuant);
-            
-            
     }
 });     
         
@@ -64,10 +68,11 @@ public class SaleForm extends JFrame {
 
             //Try catch untuk mencegah misinput pada harga
             try{
-
+                String nama = customField.getText();
                 String name = nameField.getSelectedItem().toString();
                 double harga = Double.parseDouble(priceField.getText());
                 int quant = Integer.parseInt(quantField.getText());
+                double total = quant * harga;
               
                 Product matchedProduct = null;
                 for (Product p : products) {
@@ -79,41 +84,43 @@ public class SaleForm extends JFrame {
                 
 
                 if (matchedProduct == null) {
-                JOptionPane.showMessageDialog(saleTable, "Produk tidak ditemukan!");
+                JOptionPane.showMessageDialog(customerTable, "Produk tidak ditemukan!");
                 return;
                 }
 
                 if (quant > matchedProduct.getStock()) {
-                JOptionPane.showMessageDialog(saleTable, "Stok tidak mencukupi!");
+                JOptionPane.showMessageDialog(customerTable, "Stok tidak mencukupi!");
                 return;
                 }
                 matchedProduct.setStock((int) (matchedProduct.getStock() - quant));
 
-                Sale sales = new Sale(name, harga, quant);
-                sale.add(sales);
-                tableModel.addRow(new Object[]{name, harga, quant});
+                Customer customers = new Customer(idCounter++, nama, name, quant, total);
+                customer.add(customers);
+                tableModel.addRow(new Object[]{nama, name, harga, quant, total});
 
                 priceField.setText("");
                 quantField.setText("");
+                customField.setText("");
+                
 
                 productForm.refreshStock();
 
                 mainWindow.updateBannerText();
 
                 } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(saleTable, "Harga dan Jumlah harus berupa angka!");
+                JOptionPane.showMessageDialog(customerTable, "Harga dan Jumlah harus berupa angka!");
             }
         });
         
         
-
-        
-        setTitle("Penjualan");
+        setTitle("Pemesanan");
         setSize(900, 600);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         
         JPanel formPanel = new JPanel();
+        formPanel.add(new JLabel("Nama Customer"));
+        formPanel.add(customField);
         formPanel.add(new JLabel("Nama Barang"));
         formPanel.add(nameField);       
         formPanel.add(new JLabel("Harga:"));
@@ -121,8 +128,8 @@ public class SaleForm extends JFrame {
         formPanel.add(new JLabel("Jumlah:"));        
         formPanel.add(quantField);
         formPanel.add(saleButton);
-
-        add (new JScrollPane(saleTable), BorderLayout.CENTER);
+               
+        add (new JScrollPane(customerTable), BorderLayout.CENTER);
         add (formPanel,  BorderLayout.SOUTH);
         setVisible (true);
     
@@ -136,12 +143,18 @@ public class SaleForm extends JFrame {
             }
         }
     
-    public void setProductForm(ProductForm productForm){
-        this.productForm = productForm;
-    }
     public void setCustomerForm(CustomerForm customerForm){
         this.customerForm = customerForm;
     }
+    
+    public void setSaleForm(SaleForm saleForm){
+        this.saleForm = saleForm;
+    }
+    
+    public void setProductForm(ProductForm productForm){
+        this.productForm = productForm;
+    }
+    
     public void setMemberList (MemberList memberList){
         this.memberList = memberList;
     }
